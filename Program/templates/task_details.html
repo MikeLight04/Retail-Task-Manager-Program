@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #9fddec, #1e90ff);
+            background-size: cover; /* Ensures gradient covers the full body */
+            background-attachment: fixed; /* Keeps the background fixed */
+            margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh; /* Ensures the body takes at least the full viewport height */
+        }
+
+        /* Header Block */
+        .header-block {
+            width: 100%;
+            background-color: white;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            width: 90%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-left: 40px;
+        }
+
+        .header-center {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #555;
+            text-align: center;
+            flex: 1;
+        }
+
+        .header-right .btn {
+            font-size: 16px;
+            padding: 12px 70px;
+            background-color: #1e90ff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-right: 40px;
+            margin-top: 10px;
+        }
+
+        .header-right .btn:hover {
+            background-color: #007acc;
+        }
+
+        /* Task Details Styles */
+        .task-details-container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .task-details-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .task-details-description {
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        .task-details-due-date {
+            font-size: 1rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .task-details-priority {
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .task-priority-low {
+            background-color: #2ecc71; /* Green */
+            color: white;
+        }
+
+        .task-priority-medium {
+            background-color: #f39c12; /* Orange */
+            color: white;
+        }
+
+        .task-priority-high {
+            background-color: #e74c3c; /* Red */
+            color: white;
+        }
+
+        /* Store List */
+        .store-list {
+            margin-top: 30px;
+        }
+
+        .store-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .store-item.completed {
+            background-color: #d4f8e6;
+        }
+
+        .store-item.not-completed {
+            background-color: #f8d4d4;
+        }
+
+        .store-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .store-status {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        /* Back Button */
+        .back-btn {
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #1e90ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .back-btn:hover {
+            background-color: #007acc;
+        }
+
+        .view-attachment-btn {
+            background-color: #1e90ff;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            position: absolute;  /* Position the button absolutely within its container */
+            left: 65%;  /* Move it to the middle horizontally */
+            transform: translateX(-50%);  /* Center it by adjusting from the center */
+            z-index: 1;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Style for greyed-out, disabled buttons */
+        .view-attachment-btn.disabled {
+            background-color: #b0b0b0;  /* Light grey */
+            color: #7a7a7a;  /* Darker grey text */
+            cursor: not-allowed;  /* Disable pointer cursor */
+        }
+
+        .view-attachment-btn:disabled {
+            background-color: #b0b0b0;  /* Light grey */
+            color: #7a7a7a;  /* Darker grey text */
+            cursor: not-allowed;  /* Disable pointer cursor */
+        }
+
+        .view-attachment-btn:hover {
+            background-color: #007acc;
+        }
+
+        .days-left {
+            color: rgb(255, 115, 0);
+            font-weight: bold;
+        }
+
+        /* Popup Styles */
+        .popup {
+            position: fixed; /* Fix the popup to the viewport */
+            top: 0;
+            left: 0;
+            width: 100vw; /* Full width of the viewport */
+            height: 100vh; /* Full height of the viewport */
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999; /* Ensure it appears above other content */
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative; /* To position the close button */
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto; /* Allow scrolling if content is too large */
+        }
+
+        .popup-content img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .close-popup {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .store-name {
+            font-weight: bold;
+            display: flex;
+            align-items: center; /* Align items vertically */
+        }
+
+        .completed-info {
+            font-size: 0.85em; /* Smaller font size */
+            font-weight: normal; /* Remove bold styling */
+            margin-left: 60px; /* Add spacing between the store name and completed info */
+            color: #555; /* Optional: Set a lighter color for differentiation */
+        }
+
+        .completed-info.overdue {
+            color: red; /* Red color for overdue tasks */
+            font-weight: bold; /* Optional: Make overdue stand out more */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Block -->
+    <div class="header-block">
+        <div class="header-left">Admin Dashboard</div>
+        <div class="header-center">Task Details</div>
+        <div class="header-right">
+            <a href="/hq_dashboard" class="btn">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="task-details-container">
+        <!-- Task Title and Description -->
+        <div class="task-details-left">
+            <div class="task-details-title">{{ task.title }}</div>
+            <div class="task-details-description">{{ task.description }}</div>
+        </div>
+        
+        <!-- Task Due Date -->
+        <div class="task-details-due-date">Due Date: {{ task.due_date }}</div>
+
+        <div class="task-due-date" data-due-date="{{ task.due_date }}">
+            <span class="days-left"></span>
+        </div>
+    
+        <!-- Task Priority -->
+        <div class="task-details-priority {% if task.priority == '1' %}task-priority-low{% elif task.priority == '2' %}task-priority-medium{% elif task.priority == '3' %}task-priority-high{% endif %}">
+            {% if task.priority == '1' %}
+                Low Priority
+            {% elif task.priority == '2' %}
+                Medium Priority
+            {% elif task.priority == '3' %}
+                High Priority
+            {% else %}
+                Unknown Priority
+            {% endif %}
+        </div>
+    
+        <!-- Store List -->
+        <div class="store-list">
+            <h2>Stores Associated with Task</h2>
+            {% for store in stores %}
+                <div class="store-item {% if store.completed %}completed{% else %}not-completed{% endif %}">
+                    <!-- Store Name (Left) -->
+                    <div class="store-name">
+                        {{ store.storeName }}
+                        {% if store.completed %}
+                            <span class="completed-info {% if store.overdue %}overdue{% endif %}">
+                                Completed on: {{ store.completed_date }} ({{ store.time_taken }}{% if store.overdue %}, Overdue{% endif %})
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+
+                    <!-- View Attachment Button (Center) -->
+                    {% if task.attachment_required == 1 %}
+                    <button 
+                        class="view-attachment-btn {% if store.attachment_base64 %}active{% else %}disabled{% endif %}" 
+                        data-attachment="{{ store.attachment_base64 }}" 
+                        {% if not store.attachment_base64 %}disabled{% endif %}>
+                        View Attachment
+                    </button>
+                    {% endif %}
+
+                    <!-- Completed/Incomplete Status (Right) -->
+                    <div class="store-status">
+                        {% if store.completed %}
+                            Completed
+                        {% else %}
+                            Not Completed
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    
+    </div>
+
+    <script>
+        document.querySelectorAll('.view-attachment-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const attachmentBase64 = this.getAttribute('data-attachment');
+                if (attachmentBase64) {
+                    const popup = document.createElement('div');
+                    popup.classList.add('popup');
+                    popup.innerHTML = `
+                        <div class="popup-content">
+                            <img src="data:image/png;base64,${attachmentBase64}" alt="Attachment">
+                            <button class="close-popup">X</button>
+                        </div>
+                    `;
+                    document.body.appendChild(popup);
+                    
+                    // Close popup
+                    popup.querySelector('.close-popup').addEventListener('click', () => {
+                        popup.remove();
+                    });
+                }
+            });
+        });
+
+        // Function to calculate and format the time remaining
+        function updateTimeRemaining() {
+            const dueDateElements = document.querySelectorAll('.task-due-date');
+            
+            dueDateElements.forEach(el => {
+                const dueDate = new Date(el.dataset.dueDate); // Get due date from data attribute
+                const now = new Date(); // Current date/time
+                const diffMs = dueDate - now; // Difference in milliseconds
+                
+                let message;
+                if (diffMs > 0) {
+                    // Time remaining
+                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24)); // Days
+                    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Hours
+                    message = `${diffDays} days ${diffHours} hours remaining`;
+                } else {
+                    // Overdue
+                    const overdueDays = Math.ceil(-diffMs / (1000 * 60 * 60 * 24)); // Days overdue
+                    const overdueHours = Math.ceil((-diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Hours overdue
+                    message = `Overdue by ${overdueDays} days ${overdueHours} hours`;
+                }
+    
+                // Update the text in the span
+                const span = el.querySelector('.days-left');
+                if (span) {
+                    span.textContent = message;
+                }
+            });
+        }
+    
+        // Initial run and periodic updates
+        updateTimeRemaining(); // Run immediately
+        setInterval(updateTimeRemaining, 60000); // Update every minute
+    </script>
+
+</body>
+</html>

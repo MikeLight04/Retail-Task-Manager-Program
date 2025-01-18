@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #9fddec, #1e90ff);
+            background-size: cover;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+        }
+
+
+        .header-block {
+            width: 100%;
+            background-color: white;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .header-content {
+            width: 90%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+        .header-left {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-left: 40px;
+        }
+
+
+        .header-center {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #555;
+            text-align: center;
+            flex: 1;
+        }
+
+
+        .task-details-container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+
+        .task-details-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+
+        .task-details-description {
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 10px;
+        }
+
+
+        .task-details-due-date {
+            font-size: 1rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+
+        .task-details-priority {
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+
+        .task-priority-low {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+
+        .task-priority-medium {
+            background-color: #f39c12;
+            color: white;
+        }
+
+
+        .task-priority-high {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+
+        .button-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between; /* Space the buttons to opposite sides */
+            width: 100%;
+            align-items: flex-end; /* Align the buttons to the bottom */
+        }
+
+
+        .action-btn {
+            padding: 10px 80px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            white-space: nowrap;
+
+        }
+
+
+        .action-btn.complete {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+
+        .action-btn.complete.disabled {
+            background-color: #bdc3c7;
+            color: #7f8c8d;
+            cursor: not-allowed;
+        }
+
+
+        .action-btn.attachment {
+            background-color: #3498db;
+            color: white;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn.attachment.disabled {
+            background-color: #bdc3c7;
+            color: #7f8c8d;
+            cursor: not-allowed;
+        }
+
+
+        .action-btn:hover {
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+
+        .back-btn {
+            margin-left: auto;
+            margin-top: auto;
+            margin-right: 40px;
+            padding: 10px 20px;
+            background-color: #1e90ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            height: 23px;
+            width: 160px;
+        }
+
+
+        .back-btn:hover {
+            background-color: #007acc;
+        }
+
+
+        .button-wrapper {
+            display: flex;
+            justify-content: flex-end; /* Align the button to the right */
+            width: 100%;
+        }
+
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            width: 300px;
+        }
+
+
+        .modal-content button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+
+        .confirm-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+
+        .cancel-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+
+        #attachmentPreview {
+            display: none;
+            margin-top: 15px;
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .upload-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .days-left {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-block">
+        <div class="header-left">Store Dashboard</div>
+        <div class="header-center">Task Details</div>
+        <a href="#" id="backToDashboard" class="back-btn">Back to Dashboard</a>
+    </div>
+
+    <div class="task-details-container">
+        <div class="task-details-title">{{ task.title }}</div>
+        <div class="task-details-description">{{ task.description }}</div>
+        <div class="task-details-due-date">Due Date: {{ task.due_date }}</div>
+        <div class="task-due-date" data-due-date="{{ task.due_date }}">
+            <span class="days-left"></span>
+        </div>
+        <div class="task-details-priority {% if task.priority == '1' %}task-priority-low{% elif task.priority == '2' %}task-priority-medium{% elif task.priority == '3' %}task-priority-high{% endif %}">
+            {% if task.priority == '1' %} Low Priority
+            {% elif task.priority == '2' %} Medium Priority
+            {% elif task.priority == '3' %} High Priority
+            {% else %} Unknown Priority {% endif %}
+        </div>
+
+        <!-- Attachment Preview Section -->
+        <img id="attachmentPreview" src="" alt="Attachment Preview">
+
+        <!-- Bottom Buttons -->
+        <div class="button-container">
+            <div class="upload-section">
+                <form id="attachmentForm" action="/add_attachment" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="storeID" id="storeID">
+                    <input type="hidden" name="taskID" id="taskID">
+                    <input type="file" id="attachmentInput" name="attachment" accept="image/*" style="display: none;">
+                    <button type="button" id="uploadAttachmentButton" class="action-btn attachment">Upload Attachment</button>
+                </form>
+            </div>
+
+            <div class="button-wrapper">
+                <!-- Align the buttons using flex -->
+                <div class="buttons-alignment">
+                    <button id="submitTaskButton" class="action-btn complete disabled" disabled>Submit Task</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h3>Are you sure you want to submit this task?</h3>
+            <button id="confirmSubmit" class="confirm-btn">Yes, Submit</button>
+            <button id="cancelSubmit" class="cancel-btn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h3>Task completed successfully!</h3>
+            <button id="okButton" class="confirm-btn">OK</button>
+        </div>
+    </div>
+
+    <script>
+
+        // Extract URL parameters
+        const params = new URLSearchParams(window.location.search);
+        const storeID = params.get('storeID');
+        const taskID = params.get('taskID');
+
+        // Populate form hidden inputs
+        if (storeID && taskID) {
+            document.getElementById('storeID').value = storeID;
+            document.getElementById('taskID').value = taskID;
+
+            // Set "Back to Dashboard" link
+            document.getElementById('backToDashboard').href = `/store_dashboard?storeID=${storeID}`;
+        } else {
+            alert("Missing storeID or taskID in the URL. Redirecting to the dashboard.");
+            window.location.href = "/store_dashboard";
+        }
+
+        // Handle file upload
+        const attachmentInput = document.getElementById('attachmentInput');
+        const uploadAttachmentButton = document.getElementById('uploadAttachmentButton');
+        const attachmentPreview = document.getElementById('attachmentPreview');
+        const submitTaskButton = document.getElementById('submitTaskButton');
+
+        uploadAttachmentButton.addEventListener('click', () => attachmentInput.click());
+
+        attachmentInput.addEventListener('change', () => {
+            const formData = new FormData(document.getElementById('attachmentForm'));
+
+            // Append the selected file to the FormData object
+            const file = attachmentInput.files[0];
+            if (file) {
+                formData.append('attachment', file);
+            }
+
+            fetch('/add_attachment', { method: 'POST', body: formData })
+                .then((response) => response.json())
+                .then((result) => {
+                    if (result.attachment_preview) {
+                        attachmentPreview.src = `data:image/jpeg;base64,${result.attachment_preview}`;
+                        attachmentPreview.style.display = 'block';
+
+                        submitTaskButton.disabled = false;
+                        submitTaskButton.classList.remove('disabled');
+                    } else {
+                        alert(result.message || "Error uploading attachment.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error uploading attachment:", error);
+                    alert("An error occurred during the upload. Please try again.");
+                });
+        });
+
+    // Handle task submission when "Submit Task" is clicked
+document.getElementById('submitTaskButton').addEventListener('click', () => {
+    document.getElementById('confirmationModal').style.display = 'flex';
+});
+
+// Handle task submission when "Confirm" is clicked
+// Handle task submission
+document.getElementById('confirmSubmit').addEventListener('click', () => {
+    // Check if attachment is required
+    const taskAttachmentRequired = "{{ task.attachment_required }}"; // String "True" or "False"
+
+    if (taskAttachmentRequired == "True") {
+        // If attachment is required, check if user has uploaded an attachment
+        const attachmentInput = document.getElementById('attachmentInput');
+        const file = attachmentInput.files[0]; // Get the first file if exists
+
+        if (!file) {
+            alert("Attachment is required to submit the task.");
+            return; // Stop the submission if no attachment is provided
+        }
+    }
+
+    // Proceed with the task submission regardless of whether an attachment is required or not
+    const storeID = document.getElementById('storeID').value;
+    const taskID = document.getElementById('taskID').value;
+    const dateCompleted = new Date().toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+    const formData = new FormData();
+    formData.append('storeID', storeID);
+    formData.append('taskID', taskID);
+    formData.append('date_completed', dateCompleted);
+
+    // Handle file attachment if provided
+    const attachmentInput = document.getElementById('attachmentInput');
+    const attachmentFile = attachmentInput.files[0];
+    if (attachmentFile) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const base64Attachment = reader.result.split(',')[1]; // Get base64 string (remove the data URL prefix)
+            formData.append('attachment', base64Attachment); // Append base64 image data
+            // Send data to the backend
+            fetch('/complete_task', { method: 'POST', body: formData })
+                .then((response) => response.json())
+                .then((result) => {
+                    if (result.success) {
+                        // Display success message
+                        const successModal = document.getElementById('successModal');
+                        successModal.style.display = 'flex';
+                        setTimeout(() => {
+                            const storeID = document.getElementById('storeID').value;
+                            window.location.href = `/store_dashboard?storeID=${storeID}`;
+                        }, 3000);
+                    } else {
+                        alert(result.message || "Error completing the task.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Caught error:", error);
+                    alert("An error occurred during the task submission. Please try again.");
+                });
+        };
+        reader.readAsDataURL(attachmentFile); // Convert the image to base64
+    } else {
+        // If no attachment, proceed with task submission without it
+        fetch('/complete_task', { method: 'POST', body: formData })
+            .then((response) => response.json())
+            .then((result) => {
+                if (result.success) {
+                    const successModal = document.getElementById('successModal');
+                    successModal.style.display = 'flex';
+                    setTimeout(() => {
+                        const storeID = document.getElementById('storeID').value;
+                        window.location.href = `/store_dashboard?storeID=${storeID}`;
+                    }, 3000);
+                } else {
+                    alert(result.message || "Error completing the task.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred during the task submission.");
+            });
+    }
+});
+
+
+    // Cancel submission when "Cancel" is clicked
+    document.getElementById('cancelSubmit').addEventListener('click', () => {
+        document.getElementById('confirmationModal').style.display = 'none';
+    });
+
+    // Handle redirection after task submission is successful
+    document.getElementById('okButton').addEventListener('click', () => {
+        document.getElementById('successModal').style.display = 'none';
+        const storeID = document.getElementById('storeID').value;
+        window.location.href = `/store_dashboard?storeID=${storeID}`;
+    });
+
+    // Function to calculate and format the time remaining
+    function updateTimeRemaining() {
+            const dueDateElements = document.querySelectorAll('.task-due-date');
+            
+            dueDateElements.forEach(el => {
+                const dueDate = new Date(el.dataset.dueDate); // Get due date from data attribute
+                const now = new Date(); // Current date/time
+                const diffMs = dueDate - now; // Difference in milliseconds
+                
+                let message;
+                if (diffMs > 0) {
+                    // Time remaining
+                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24)); // Days
+                    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Hours
+                    message = `${diffDays} days ${diffHours} hours remaining`;
+                } else {
+                    // Overdue
+                    const overdueDays = Math.ceil(-diffMs / (1000 * 60 * 60 * 24)); // Days overdue
+                    const overdueHours = Math.ceil((-diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Hours overdue
+                    message = `Overdue by ${overdueDays} days ${overdueHours} hours`;
+                }
+    
+                // Update the text in the span
+                const span = el.querySelector('.days-left');
+                if (span) {
+                    span.textContent = message;
+                }
+            });
+        }
+    
+        // Initial run and periodic updates
+        updateTimeRemaining(); // Run immediately
+        setInterval(updateTimeRemaining, 60000); // Update every minute
+        
+        // Assign the value of task.attachment_required directly
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Your code to enable/disable buttons goes here
+            const uploadAttachmentButton = document.getElementById('uploadAttachmentButton');
+            const submitTaskButton = document.getElementById('submitTaskButton');
+            const taskAttachmentRequired = "{{ task.attachment_required }}"; // Assuming this is passed correctly as "True" or "False"
+
+            if (taskAttachmentRequired == "True") {
+                // If attachment is required, enable the "Upload Attachment" button and disable the "Submit Task" button
+                uploadAttachmentButton.disabled = false;
+                submitTaskButton.disabled = true;
+                
+                // Apply styling for disabled state
+                submitTaskButton.classList.add('disabled');  // Adds 'disabled' class to apply styles
+                uploadAttachmentButton.classList.remove('disabled');  // Ensure no disabled class on "Upload Attachment"
+            } else {
+                // If attachment is not required, disable the "Upload Attachment" button and enable the "Submit Task" button
+                uploadAttachmentButton.disabled = true;
+                submitTaskButton.disabled = false;
+                
+                // Apply styling for disabled state
+                submitTaskButton.classList.remove('disabled');  // Removes 'disabled' class when enabling
+                uploadAttachmentButton.classList.add('disabled');  // Adds 'disabled' class to apply styles
+            }
+        });
+
+    </script>
+</body>
+</html>

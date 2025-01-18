@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #9fddec, #1e90ff);
+            background-size: cover;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+        }
+
+        .header-block {
+            width: 100%;
+            background-color: white;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-left: 40px;
+        }
+        .header-center {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-right: 280px;
+            color: #555;
+            text-align: center;
+            flex: 1;
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .sort-option {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .sort-option.selected {
+            background-color: #30a2ee;
+        }
+
+        .task-list-container {
+            width: 100%;
+            max-width: 1400px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+        .task-item:hover {
+            background-color: #e3f1fb;
+        }
+
+        .task-details {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .task-title {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.2rem;
+        }
+        .task-title-link {
+            text-decoration: none;
+            color: #333;
+        }
+        .task-description {
+            font-size: 1rem;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 60ch;
+        }
+        .task-due-date {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .task-priority {
+            padding: 8px 12px;
+            border-radius: 5px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 300px;
+            text-align: center;
+            min-width: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .task-priority.low {
+            background-color: #2ecc71;
+        }
+        .task-priority.medium {
+            background-color: #f39c12;
+        }
+        .task-priority.high {
+            background-color: #e74c3c;
+        }
+        .task-priority.unknown {
+            background-color: #95a5a6;
+        }
+
+        .task-open-btn,
+        .task-edit-btn {
+            padding: 12px 40px;
+            background-color: #1e90ff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+
+        .task-open-btn:hover,
+        .task-edit-btn:hover {
+            background-color: #007acc;
+        }
+
+        .no-tasks-message {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #729cc5;
+        }
+
+        .completed-date {
+            color: #55a362; /* This will change the color to Tomato */
+        }
+
+        .days-left {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-block">
+        <div class="header-left">Store Dashboard</div>
+        <div class="header-center">Task Manager</div>
+    </div>
+    <br>
+    
+    <div class="sort-options">
+        <a href="/store_dashboard?storeID={{ storeID }}&sort_by=priority_desc" class="sort-option {% if sort_by == 'priority_desc' %}selected{% endif %}">Sort by Priority (High to Low)</a>
+        <a href="/store_dashboard?storeID={{ storeID }}&sort_by=priority_asc" class="sort-option {% if sort_by == 'priority_asc' %}selected{% endif %}">Sort by Priority (Low to High)</a>
+        <a href="/store_dashboard?storeID={{ storeID }}&sort_by=due_date_asc" class="sort-option {% if sort_by == 'due_date_asc' %}selected{% endif %}">Sort by Due Date (Soonest First)</a>
+        <a href="/store_dashboard?storeID={{ storeID }}&sort_by=due_date_desc" class="sort-option {% if sort_by == 'due_date_desc' %}selected{% endif %}">Sort by Due Date (Latest First)</a>
+    </div>
+    
+
+    <!-- Incomplete Tasks Section -->
+        <div class="task-list-container">
+            <h2>Incomplete Tasks</h2>
+            {% if tasks_incomplete %}
+                {% for task in tasks_incomplete %}
+                <div class="task-item">
+                    <div class="task-details">
+                        <div class="task-title">{{ task.title }}</div>
+                        <div class="task-description">{{ task.description }}</div>
+                        <div class="task-due-date">Due Date: {{ task.due_date }} </div>
+                        <div class="task-due-date" data-due-date="{{ task.due_date }}">
+                            <span class="days-left"></span>
+                        </div>
+                    </div>
+                    
+                    {% if task.priority == '1' %}
+                        <div class="task-priority low">Low Priority</div>
+                    {% elif task.priority == '2' %}
+                        <div class="task-priority medium">Medium Priority</div>
+                    {% elif task.priority == '3' %}
+                        <div class="task-priority high">High Priority</div>
+                    {% else %}
+                        <div class="task-priority unknown">Unknown</div>
+                    {% endif %}
+
+                    <div class="task-actions">
+                        <a href="/task_store_details?storeID={{ storeID }}&taskID={{ task.id }}" class="task-open-btn">Open Task</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>Good job! All up to date!!</p>
+            {% endif %}
+        </div>
+
+    <!-- Completed Tasks Section -->
+    <div class="task-list-container">
+        <h2>Completed Tasks</h2>
+        {% if tasks_completed %}
+            {% for task in tasks_completed %}
+            <div class="task-item">
+                <div class="task-details">
+                    <div class="task-title">{{ task.title }}</div>
+                    <div class="task-description">{{ task.description }}</div>
+                    <div class="task-due-date">Due Date: {{ task.due_date }}</div>
+                    <div class="task-completed-date completed-date">Completed On: {{ task.date_completed }}</div>
+                </div>
+
+                <!--<div class="task-actions">
+                    <a href="/task/{{ task.id }}/edit" class="task-edit-btn">Edit Task</a>
+                </div> -->
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No completed tasks</p>
+        {% endif %}
+    </div>
+
+    <script>
+        // Function to calculate and format the time remaining
+        function updateTimeRemaining() {
+            const dueDateElements = document.querySelectorAll('.task-due-date');
+            
+            dueDateElements.forEach(el => {
+                const dueDate = new Date(el.dataset.dueDate); // Get due date from data attribute
+                const now = new Date(); // Current date/time
+                const diffMs = dueDate - now; // Difference in milliseconds
+                
+                let message;
+                if (diffMs > 0) {
+                    // Time remaining
+                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24)); // Days
+                    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Hours
+                    message = `${diffDays} days ${diffHours} hours remaining`;
+                } else {
+                    // Overdue
+                    const overdueDays = Math.ceil(-diffMs / (1000 * 60 * 60 * 24)); // Days overdue
+                    const overdueHours = Math.ceil((-diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Hours overdue
+                    message = `Overdue by ${overdueDays} days ${overdueHours} hours`;
+                }
+    
+                // Update the text in the span
+                const span = el.querySelector('.days-left');
+                if (span) {
+                    span.textContent = message;
+                }
+            });
+        }
+    
+        // Initial run and periodic updates
+        updateTimeRemaining(); // Run immediately
+        setInterval(updateTimeRemaining, 60000); // Update every minute
+    </script>    
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* General Reset */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #9fddec, #1e90ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #ffffff;
+        }
+
+        /* Login Container */
+        .login-container {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #1e90ff;
+            margin-bottom: 20px;
+        }
+
+        /* Input Fields */
+        input[type="text"], input[type="password"] {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #1e90ff;
+            box-shadow: 0 0 5px #1e90ff;
+        }
+
+        /* Login Button */
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #1e90ff;
+            border: none;
+            color: #ffffff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1c7ed6;
+        }
+
+        /* Error Message */
+        .error {
+            color: red;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Welcome Back!</h2>
+        <form id="loginForm">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p id="error" class="error"></p>
+    </div>
+    
+    <script>
+        const form = document.getElementById("loginForm");
+        const errorElement = document.getElementById("error");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            errorElement.textContent = "";
+
+            const formData = new FormData(form);
+            const data = JSON.stringify(Object.fromEntries(formData.entries()));
+
+            try {
+                const response = await fetch("/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: data,
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Store the storeID in localStorage after successful login
+                    if (result.store_id) {
+                        localStorage.setItem("storeID", result.store_id);
+                    }
+                    // errorElement.textContent = "Value: "+ result.store_id;
+                    // errorElement.textContent = "Stored: "+localStorage.getItem("storeID");
+
+                    window.location.href = result.redirect_url;
+                } else {
+                    errorElement.textContent = result.message;
+                }
+            } catch (err) {
+                errorElement.textContent = "An error occurred. Please try again.";
+            }
+        });
+    </script>
+</body>
+</html>
+
+
